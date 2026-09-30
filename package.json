@@ -13,6 +13,6 @@
     "vite": "^7.3.0"
   },
   "name": "@mywallpaper-addons/task-list",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "license": "MIT"
 }

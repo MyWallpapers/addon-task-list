@@ -2,7 +2,7 @@
   "runtime": "canvas-v1",
   "name": "Today",
   "description": "Une liste de tâches, une ligne par tâche. Les coches sont conservées sur cet appareil.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "entry": "dist/assets/addon.js",
   "thumbnail": "assets/thumbnail.png",
   "deviceSettingsVersion": "1",

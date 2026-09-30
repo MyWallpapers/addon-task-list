@@ -1,10 +1,13 @@
 import type { CanvasAddonMountContext } from "../generated/mywallpaper-runtime";
 import { card, el } from "./ui";
 import "./style.css";
+import { deviceWriter } from "./device-write";
 export function mount(context: CanvasAddonMountContext) {
   const view = card(context, "Tâches");
   let values = context.layer.settings.get(),
-    state = context.layer.deviceSettings.get();
+    state = context.layer.deviceSettings.get(),
+    pending = false,
+    error = "";
   const render = () => {
     view.header.textContent = String(values.title || "Tâches");
     view.body.replaceChildren();
@@ -22,14 +25,10 @@ export function mount(context: CanvasAddonMountContext) {
         text = el("span", label, checked ? "done" : "");
       input.type = "checkbox";
       input.checked = checked;
+      input.disabled = pending;
       input.onchange = () => {
         lines[index] = (input.checked ? "[x] " : "[ ] ") + label;
-        state = { tasks: lines.join("\n") };
-        render();
-        void context.layer.deviceSettings.set(state).catch(() => {
-          view.caption.textContent = "Tâches non enregistrées";
-          view.caption.classList.add("error");
-        });
+        writer.write({ tasks: lines.join("\n") });
       };
       row.append(input, text);
       view.body.append(row);
@@ -39,8 +38,23 @@ export function mount(context: CanvasAddonMountContext) {
       view.body.append(
         el("div", "Ajoutez vos tâches dans les réglages.", "empty"),
       );
-    view.caption.textContent = done + " / " + lines.length + " · cet appareil";
+    view.caption.textContent =
+      error || done + " / " + lines.length + " · cet appareil";
+    view.caption.classList.toggle("error", Boolean(error));
   };
+  const writer = deviceWriter(
+    context,
+    (next) => {
+      state = next;
+      render();
+    },
+    (busy, message) => {
+      pending = busy;
+      error = message;
+      render();
+    },
+    "Tâches non enregistrées",
+  );
   const stop = context.layer.settings.subscribe((next) => {
       values = next;
       render();
@@ -51,6 +65,7 @@ export function mount(context: CanvasAddonMountContext) {
     });
   render();
   return () => {
+    writer.dispose();
     stop();
     stopDevice();
     view.section.remove();
