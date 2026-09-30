@@ -1,0 +1,27 @@
+{
+  "runtime": "canvas-v1",
+  "name": "Today",
+  "description": "Une liste de tâches, une ligne par tâche. Les coches sont conservées sur cet appareil.",
+  "version": "0.1.0",
+  "entry": "dist/assets/addon.js",
+  "thumbnail": "assets/thumbnail.png",
+  "deviceSettingsVersion": "1",
+  "ui": {
+    "pointerEvents": "auto"
+  },
+  "settings": [
+    {
+      "id": "title",
+      "type": "string",
+      "label": "Titre",
+      "default": "Aujourd’hui"
+    },
+    {
+      "id": "tasks",
+      "type": "textarea",
+      "label": "Tâches : une ligne, [x] pour une tâche terminée",
+      "default": "Choisir une priorité\nAvancer sans distraction\nPrendre une pause",
+      "scope": "device"
+    }
+  ]
+}
